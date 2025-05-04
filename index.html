@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Text to Handwriting Converter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Handlee&family=Dancing+Script&family=Great+Vibes&family=Comfortaa:wght@500&family=Indie+Flower&display=swap" rel="stylesheet">
   <style>
     :root {
       --line-color: #e0e0e0;
@@ -97,6 +97,14 @@
       padding: 0 10px;
     }
 
+    select.font-select {
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+
     @media (max-width: 600px) {
       .handwriting {
         font-size: 16px;
@@ -120,6 +128,13 @@
       <div class="controls">
         <input type="color" id="textColor" value="#2c3e50" title="Text Color">
         <input type="range" id="lineSpacing" min="20" max="40" value="28" title="Line Spacing">
+        <select id="fontSelect" class="font-select">
+          <option value="'Handlee', cursive">Handlee</option>
+          <option value="'Dancing Script', cursive">Dancing Script</option>
+          <option value="'Great Vibes', cursive">Great Vibes</option>
+          <option value="'Comfortaa', cursive">Comfortaa</option>
+          <option value="'Indie Flower', cursive">Indie Flower</option>
+        </select>
         <button type="submit">Generate Handwriting</button>
         <button type="button" onclick="clearText()">Clear</button>
       </div>
@@ -138,6 +153,7 @@
     const outputText = document.getElementById('outputText');
     const textColor = document.getElementById('textColor');
     const lineSpacing = document.getElementById('lineSpacing');
+    const fontSelect = document.getElementById('fontSelect');
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -147,6 +163,7 @@
     function updateOutput() {
       outputText.textContent = textInput.value || 'Your converted text will appear here...';
       outputText.style.color = textColor.value;
+      outputText.style.fontFamily = fontSelect.value;
       document.documentElement.style.setProperty('--line-height', lineSpacing.value + 'px');
     }
 
