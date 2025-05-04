@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text to Handwriting Converter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Handlee&family=Dancing+Script&family=Great+Vibes&family=Comfortaa:wght@500&family=Indie+Flower&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --line-color: #e0e0e0;
+      --text-color: #2c3e50;
+      --line-height: 28px;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: grid;
+      gap: 15px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    textarea {
+      height: 150px;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .output-container {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .notebook {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 40px 30px;
+      position: relative;
+    }
+
+    .notebook::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: 
+        linear-gradient(to bottom, var(--line-color) 1px, transparent 1px);
+      background-size: 100% var(--line-height);
+      pointer-events: none;
+    }
+
+    .handwriting {
+      font-family: 'Handlee', cursive;
+      font-size: 20px;
+      color: var(--text-color);
+      line-height: var(--line-height);
+      white-space: pre-wrap;
+      position: relative;
+      z-index: 1;
+      padding: 0 10px;
+    }
+
+    select.font-select {
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn-save {
+      background-color: #27ae60;
+      color: white;
+    }
+
+    .btn-save:hover {
+      background-color: #219150;
+    }
+
+    @media (max-width: 600px) {
+      .handwriting {
+        font-size: 16px;
+      }
+      
+      .notebook {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Text to Handwriting Converter</h1>
+    </header>
+    
+    <form id="textForm">
+      <textarea id="textInput" placeholder="Type your text here..."></textarea>
+      
+      <div class="controls">
+        <input type="color" id="textColor" value="#2c3e50" title="Text Color">
+        <input type="range" id="lineSpacing" min="20" max="40" value="28" title="Line Spacing">
+        <select id="fontSelect" class="font-select">
+          <option value="'Handlee', cursive">Handlee</option>
+          <option value="'Dancing Script', cursive">Dancing Script</option>
+          <option value="'Great Vibes', cursive">Great Vibes</option>
+          <option value="'Comfortaa', cursive">Comfortaa</option>
+          <option value="'Indie Flower', cursive">Indie Flower</option>
+        </select>
+        <button type="submit" class="btn">Generate Handwriting</button>
+        <button type="button" onclick="clearText()" class="btn">Clear</button>
+        <button type="button" onclick="saveToPDF()" class="btn btn-save">Save as PDF</button>
+      </div>
+    </form>
+    
+    <div class="output-container">
+      <div class="notebook">
+        <div class="handwriting" id="outputText">Your converted text will appear here...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    const form = document.getElementById('textForm');
+    const textInput = document.getElementById('textInput');
+    const outputText = document.getElementById('outputText');
+    const textColor = document.getElementById('textColor');
+    const lineSpacing = document.getElementById('lineSpacing');
+    const fontSelect = document.getElementById('fontSelect');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      updateOutput();
+    });
+
+    function updateOutput() {
+      outputText.textContent = textInput.value || 'Your converted text will appear here...';
+      outputText.style.color = textColor.value;
+      outputText.style.fontFamily = fontSelect.value;
+      document.documentElement.style.setProperty('--line-height', lineSpacing.value + 'px');
+    }
+
+    function clearText() {
+      textInput.value = '';
+      updateOutput();
+    }
+
+    async function saveToPDF() {
+      const notebook = document.querySelector('.notebook');
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [notebook.scrollWidth, notebook.scrollHeight + 20]
+      });
+
+      const canvas = await html2canvas(notebook, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      doc.addImage(imgData, 'PNG', 0, 0, notebook.scrollWidth, notebook.scrollHeight);
+      doc.save('handwriting.pdf');
+    }
+
+    // Initialize with default values
+    updateOutput();
+  </script>
+</body>
+</html>
