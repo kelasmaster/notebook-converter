@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Text to Handwriting Converter</title>
+  <title>Text to Booknote Converter</title>
   <link href="https://fonts.googleapis.com/css2?family=Handlee&family=Dancing+Script&family=Great+Vibes&family=Comfortaa:wght@500&family=Indie+Flower&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -86,7 +86,7 @@
       pointer-events: none;
     }
 
-    .handwriting {
+    .booknote {
       font-family: 'Handlee', cursive;
       font-size: 20px;
       color: var(--text-color);
@@ -149,7 +149,7 @@
     }
 
     @media (max-width: 600px) {
-      .handwriting {
+      .booknote {
         font-size: 16px;
       }
       
@@ -162,7 +162,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>Text to Handwriting Converter</h1>
+      <h1>Text to Booknote Converter</h1>
     </header>
     
     <form id="textForm">
@@ -178,7 +178,7 @@
           <option value="'Comfortaa', cursive">Comfortaa</option>
           <option value="'Indie Flower', cursive">Indie Flower</option>
         </select>
-        <button type="submit" class="btn">Generate Handwriting</button>
+        <button type="submit" class="btn">Generate Booknote</button>
         <button type="button" onclick="clearText()" class="btn">Clear</button>
         <button type="button" onclick="saveToPDF()" class="btn btn-save">Save as PDF</button>
         <button type="button" onclick="saveImage('png')" class="btn btn-save">Save as PNG</button>
@@ -188,7 +188,7 @@
     
     <div class="output-container">
       <div class="notebook">
-        <div class="handwriting" id="outputText">Your converted text will appear here...</div>
+        <div class="booknote" id="outputText">Your converted text will appear here...</div>
       </div>
     </div>
   </div>
@@ -242,7 +242,7 @@
       
       // Generate 4-digit random number with leading zeros
       const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-      const filename = `handwriting-${randomNum}.pdf`;
+      const filename = `booknote-${randomNum}.pdf`;
       
       // Show notification
       showNotification(`Downloaded: ${filename}`);
@@ -257,7 +257,7 @@
       
       // Generate 4-digit random number with leading zeros
       const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-      const filename = `handwriting-${randomNum}.${format}`;
+      const filename = `booknote-${randomNum}.${format}`;
       
       // Convert canvas to image data URL
       const imageData = canvas.toDataURL(`image/${format === 'png' ? 'png' : 'jpeg'}`);
